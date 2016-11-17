@@ -51,8 +51,8 @@ public class SessionFilter implements Filter {
 
     @Override
     public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain) throws IOException, ServletException {
-        HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
-        boolean userLoggedIn = sessionService.isUserLoggedIn(httpServletRequest.getSession());
+        final HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
+        final boolean userLoggedIn = sessionService.isUserLoggedIn(httpServletRequest.getSession());
 
         if (userLoggedIn) {
             filterChain.doFilter(servletRequest, servletResponse);
