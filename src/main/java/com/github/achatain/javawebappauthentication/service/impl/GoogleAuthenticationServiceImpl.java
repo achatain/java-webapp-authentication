@@ -25,44 +25,45 @@ import com.github.achatain.javawebappauthentication.exception.AuthenticationExce
 import com.github.achatain.javawebappauthentication.service.AuthenticationService;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
+import static java.lang.String.format;
 import static java.util.Objects.isNull;
 
 public class GoogleAuthenticationServiceImpl implements AuthenticationService {
 
-    private static final String ISSUER = "accounts.google.com";
-    private static final String USER_ID_PREFIX = "goog-";
-    private static final String NAME_KEY = "name";
-    private static final String GIVEN_NAME_KEY = "given_name";
-    private static final String FAMILY_NAME_KEY = "family_name";
-    private static final String PICTURE_KEY = "picture";
-    private static final String DEFAULT = "";
+    private final GoogleIdTokenVerifier verifier;
+
+    static final String USER_ID_PREFIX = "goog-";
+    static final String NAME_KEY = "name";
+    static final String GIVEN_NAME_KEY = "given_name";
+    static final String FAMILY_NAME_KEY = "family_name";
+    static final String PICTURE_KEY = "picture";
+    static final String DEFAULT = "";
+
+    @Inject
+    private GoogleAuthenticationServiceImpl(final GoogleIdTokenVerifier verifier) {
+        this.verifier = verifier;
+    }
 
     @Override
     public AuthenticatedUser authenticate(final AuthenticationRequest authenticationRequest) throws AuthenticationException {
+        final String token = authenticationRequest.getToken();
+
         GoogleIdToken idToken;
 
         try {
-            final HttpTransport transport = GoogleNetHttpTransport.newTrustedTransport();
-            final JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
-
-            final GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory).setIssuer(ISSUER).build();
-
-            idToken = verifier.verify(authenticationRequest.getToken());
+            idToken = verifier.verify(token);
         }
         catch (GeneralSecurityException | IOException e) {
-            throw new AuthenticationException("Authentication failed", e);
+            throw new RuntimeException(format("Could not verify the token [%s]", token), e);
         }
 
         if (isNull(idToken)) {
-            throw new AuthenticationException("Invalid authentication token");
+            throw new AuthenticationException(format("Invalid authentication token [%s]", token));
         }
 
         final GoogleIdToken.Payload payload = idToken.getPayload();

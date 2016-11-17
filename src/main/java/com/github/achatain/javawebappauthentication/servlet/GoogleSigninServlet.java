@@ -19,6 +19,38 @@
 
 package com.github.achatain.javawebappauthentication.servlet;
 
-public class GoogleSigninServlet {
+import com.github.achatain.javawebappauthentication.entity.AuthenticatedUser;
+import com.github.achatain.javawebappauthentication.entity.AuthenticationRequest;
+import com.github.achatain.javawebappauthentication.service.AuthenticationService;
+import com.google.common.base.Preconditions;
+import com.google.gson.Gson;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Objects;
+
+@Singleton
+public class GoogleSigninServlet extends HttpServlet {
+
+    private final transient Gson gson;
+    private final transient AuthenticationService authenticationService;
+
+    @Inject
+    private GoogleSigninServlet(final Gson gson, final AuthenticationService authenticationService) {
+        this.gson = gson;
+        this.authenticationService = authenticationService;
+    }
+
+    @Override
+    protected void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
+        final AuthenticationRequest authenticationRequest = gson.fromJson(req.getReader(), AuthenticationRequest.class);
+        Preconditions.checkArgument(Objects.nonNull(authenticationRequest), "Invalid request");
+        final AuthenticatedUser authenticatedUser = authenticationService.authenticate(authenticationRequest);
+        resp.getWriter().write(gson.toJson(authenticatedUser));
+    }
 }
