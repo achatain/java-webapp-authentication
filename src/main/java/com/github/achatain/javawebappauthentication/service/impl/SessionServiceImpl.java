@@ -17,19 +17,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.github.achatain.javawebappauthentication.module;
+package com.github.achatain.javawebappauthentication.service.impl;
 
-import com.github.achatain.javawebappauthentication.service.AuthenticationService;
+import com.github.achatain.javawebappauthentication.entity.AuthenticatedUser;
 import com.github.achatain.javawebappauthentication.service.SessionService;
-import com.github.achatain.javawebappauthentication.service.impl.GoogleAuthenticationServiceImpl;
-import com.github.achatain.javawebappauthentication.service.impl.SessionServiceImpl;
-import com.google.inject.AbstractModule;
 
-public class AuthenticationModule extends AbstractModule {
+import javax.servlet.http.HttpSession;
+
+public class SessionServiceImpl implements SessionService {
+
+    static final String SESSION_IS_USER_LOGGED_IN = "IsUserLoggedIn";
+    static final String SESSION_LOGGED_IN_USER = "LoggedInUser";
 
     @Override
-    protected void configure() {
-        bind(AuthenticationService.class).to(GoogleAuthenticationServiceImpl.class);
-        bind(SessionService.class).to(SessionServiceImpl.class);
+    public boolean isUserLoggedIn(final HttpSession session) {
+        return (boolean) session.getAttribute(SESSION_IS_USER_LOGGED_IN);
+    }
+
+    @Override
+    public AuthenticatedUser getUserFromSession(final HttpSession session) {
+        return (AuthenticatedUser) session.getAttribute(SESSION_LOGGED_IN_USER);
     }
 }

@@ -38,28 +38,44 @@ import static java.util.Objects.isNull;
 public class GoogleAuthenticationServiceImpl implements AuthenticationService {
 
     private static final String ISSUER = "accounts.google.com";
+    private static final String USER_ID_PREFIX = "goog-";
+    private static final String NAME_KEY = "name";
+    private static final String GIVEN_NAME_KEY = "given_name";
+    private static final String FAMILY_NAME_KEY = "family_name";
+    private static final String PICTURE_KEY = "picture";
+    private static final String DEFAULT = "";
 
     @Override
     public AuthenticatedUser authenticate(final AuthenticationRequest authenticationRequest) throws AuthenticationException {
         GoogleIdToken idToken;
 
         try {
-            HttpTransport transport = GoogleNetHttpTransport.newTrustedTransport();
-            JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+            final HttpTransport transport = GoogleNetHttpTransport.newTrustedTransport();
+            final JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
 
-            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory).setIssuer(ISSUER).build();
+            final GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory).setIssuer(ISSUER).build();
 
             idToken = verifier.verify(authenticationRequest.getToken());
         }
         catch (GeneralSecurityException | IOException e) {
-            throw new AuthenticationException("Unable to authenticate", e);
+            throw new AuthenticationException("Authentication failed", e);
         }
 
         if (isNull(idToken)) {
             throw new AuthenticationException("Invalid authentication token");
         }
 
-        GoogleIdToken.Payload payload = idToken.getPayload();
-        return AuthenticatedUser.create().withId(payload.getSubject()).withEmail(payload.getEmail()).build();
+        final GoogleIdToken.Payload payload = idToken.getPayload();
+
+        return AuthenticatedUser
+                .create()
+                .withId(USER_ID_PREFIX + payload.getSubject())
+                .withEmail(payload.getEmail())
+                .withName((String) payload.getOrDefault(NAME_KEY, DEFAULT))
+                .withGivenName((String) payload.getOrDefault(GIVEN_NAME_KEY, DEFAULT))
+                .withFamilyName((String) payload.getOrDefault(FAMILY_NAME_KEY, DEFAULT))
+                .withHostedDomain(payload.getHostedDomain())
+                .withPicture((String) payload.getOrDefault(PICTURE_KEY, DEFAULT))
+                .build();
     }
 }
