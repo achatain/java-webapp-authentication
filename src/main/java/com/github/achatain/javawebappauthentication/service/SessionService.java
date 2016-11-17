@@ -17,24 +17,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.github.achatain.javawebappauthentication.filter;
+package com.github.achatain.javawebappauthentication.service;
 
-import javax.servlet.*;
-import java.io.IOException;
+import com.github.achatain.javawebappauthentication.entity.AuthenticatedUser;
 
-public class AuthenticationFilter implements Filter {
+import javax.servlet.http.HttpSession;
 
-    @Override
-    public void init(final FilterConfig filterConfig) throws ServletException {
-        // no-op
-    }
+public interface SessionService {
 
-    @Override
-    public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain) throws IOException, ServletException {
-    }
+    boolean isUserLoggedIn(HttpSession session);
 
-    @Override
-    public void destroy() {
-        // no-op
-    }
+    AuthenticatedUser getUserFromSession(HttpSession session);
 }
