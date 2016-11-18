@@ -29,11 +29,14 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.logging.Logger;
 
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
 
 public class GoogleAuthenticationServiceImpl implements AuthenticationService {
+
+    private static final Logger LOG = Logger.getLogger(GoogleAuthenticationServiceImpl.class.getName());
 
     private final GoogleIdTokenVerifier verifier;
 
@@ -56,6 +59,7 @@ public class GoogleAuthenticationServiceImpl implements AuthenticationService {
         GoogleIdToken idToken;
 
         try {
+            LOG.info(format("Attempting to verify token [%s]", token));
             idToken = verifier.verify(token);
         }
         catch (GeneralSecurityException | IOException e) {
@@ -68,7 +72,7 @@ public class GoogleAuthenticationServiceImpl implements AuthenticationService {
 
         final GoogleIdToken.Payload payload = idToken.getPayload();
 
-        return AuthenticatedUser
+        AuthenticatedUser authenticatedUser = AuthenticatedUser
                 .create()
                 .withId(USER_ID_PREFIX + payload.getSubject())
                 .withEmail(payload.getEmail())
@@ -78,5 +82,8 @@ public class GoogleAuthenticationServiceImpl implements AuthenticationService {
                 .withHostedDomain(payload.getHostedDomain())
                 .withPicture((String) payload.getOrDefault(PICTURE_KEY, DEFAULT))
                 .build();
+        LOG.info(format("Token successfully verified, matching user is [%s]", authenticatedUser));
+
+        return authenticatedUser;
     }
 }

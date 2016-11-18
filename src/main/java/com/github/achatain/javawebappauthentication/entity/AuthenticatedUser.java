@@ -61,6 +61,11 @@ public class AuthenticatedUser {
         return picture;
     }
 
+    @Override
+    public String toString() {
+        return "AuthenticatedUser{" + "id='" + id + '\'' + ", email='" + email + '\'' + ", name='" + name + '\'' + ", givenName='" + givenName + '\'' + ", familyName='" + familyName + '\'' + ", hostedDomain='" + hostedDomain + '\'' + ", picture='" + picture + '\'' + '}';
+    }
+
     public static Builder create() {
         return new Builder();
     }
