@@ -51,13 +51,13 @@ public class SessionServiceImplTest {
     @Test
     public void shouldCheckIfUserIsLoggedIn() throws Exception {
         when(session.getAttribute(SESSION_IS_USER_LOGGED_IN)).thenReturn(true);
-        assertThat(sessionService.isUserLoggedIn(session), is(true));
+        assertThat(sessionService.isUserLoggedIn(session, ""), is(true));
     }
 
     @Test
     public void shouldReturnFalseWhenNoUserLoggedInAttributeIsFoundInSession() throws Exception {
         when(session.getAttribute(SESSION_IS_USER_LOGGED_IN)).thenReturn(null);
-        assertThat(sessionService.isUserLoggedIn(session), is(false));
+        assertThat(sessionService.isUserLoggedIn(session, ""), is(false));
     }
 
     @Test

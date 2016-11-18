@@ -22,12 +22,14 @@ package com.github.achatain.javawebappauthentication.servlet;
 import com.github.achatain.javawebappauthentication.service.SessionService;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@Singleton
 public class SignOutServlet extends HttpServlet {
 
     private final transient SessionService sessionService;

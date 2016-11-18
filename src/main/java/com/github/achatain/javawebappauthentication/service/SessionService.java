@@ -25,7 +25,7 @@ import javax.servlet.http.HttpSession;
 
 public interface SessionService {
 
-    boolean isUserLoggedIn(HttpSession session);
+    boolean isUserLoggedIn(HttpSession session, String redirectUrl);
 
     AuthenticatedUser getUserFromSession(HttpSession session);
 

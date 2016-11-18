@@ -32,7 +32,6 @@
         <hamcrest-version>2.0.0.0</hamcrest-version>
         <coverall-version>4.3.0</coverall-version>
         <jacoco-version>0.7.7.201606060606</jacoco-version>
-        <commons-validator-version>1.5.1</commons-validator-version>
     </properties>
 
     <prerequisites>
@@ -65,11 +64,6 @@
             <groupId>com.google.api-client</groupId>
             <artifactId>google-api-client</artifactId>
             <version>${google-api-client-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-validator</groupId>
-            <artifactId>commons-validator</artifactId>
-            <version>${commons-validator-version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
