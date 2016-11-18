@@ -51,7 +51,7 @@ JWA (**J**ava **W**ebapp **A**uthentication) assists in leveraging [Google Sign-
     private final transient SessionService sessionService;
 
     @Inject
-    private GoogleSigninServlet(final SessionService sessionService) {
+    private MyServlet(final SessionService sessionService) {
         this.sessionService = sessionService;
     }
 
