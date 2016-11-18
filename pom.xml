@@ -28,6 +28,10 @@
         <java-version>1.8</java-version>
         <maven-surefire-plugin-version>2.19.1</maven-surefire-plugin-version>
         <codehaus-mojo-versions-maven-plugin-version>2.3</codehaus-mojo-versions-maven-plugin-version>
+        <mockito-version>2.2.21</mockito-version>
+        <hamcrest-version>2.0.0.0</hamcrest-version>
+        <coverall-version>4.3.0</coverall-version>
+        <jacoco-version>0.7.7.201606060606</jacoco-version>
     </properties>
 
     <prerequisites>
@@ -75,19 +79,19 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>2.2.19</version>
+            <version>${mockito-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-junit</artifactId>
-            <version>2.0.0.0</version>
+            <version>${hamcrest-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
 
     <build>
-        <finalName>${artifactId}-${version}</finalName>
+        <finalName>${project.artifactId}-${project.version}</finalName>
 
         <plugins>
             <plugin>
@@ -127,12 +131,12 @@
             <plugin>
                 <groupId>org.eluder.coveralls</groupId>
                 <artifactId>coveralls-maven-plugin</artifactId>
-                <version>4.1.0</version>
+                <version>${coverall-version}</version>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.5.201505241946</version>
+                <version>${jacoco-version}</version>
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
