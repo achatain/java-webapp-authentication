@@ -21,22 +21,8 @@ package com.github.achatain.javawebappauthentication.exception;
 
 public class AuthenticationException extends RuntimeException {
 
-    public AuthenticationException() {
-    }
-
     public AuthenticationException(final String message) {
         super(message);
     }
 
-    public AuthenticationException(final String message, final Throwable cause) {
-        super(message, cause);
-    }
-
-    public AuthenticationException(final Throwable cause) {
-        super(cause);
-    }
-
-    public AuthenticationException(final String message, final Throwable cause, final boolean enableSuppression, final boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 }

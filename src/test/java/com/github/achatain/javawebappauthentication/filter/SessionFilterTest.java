@@ -80,4 +80,10 @@ public class SessionFilterTest {
         verify(httpServletResponse).sendRedirect("https://test.com/auth");
     }
 
+    @Test
+    public void shouldDoNothingWhenInvokingDestroy() throws Exception {
+        sessionFilter.destroy();
+        verifyZeroInteractions(sessionService);
+    }
+
 }

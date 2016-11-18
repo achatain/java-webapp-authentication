@@ -19,30 +19,15 @@
 
 package com.github.achatain.javawebappauthentication.entity;
 
-public class AuthenticationRequest {
+import org.junit.Test;
 
-    private String token;
+import static org.junit.Assert.assertEquals;
 
-    public String getToken() {
-        return token;
+public class AuthenticationRequestTest {
+
+    @Test
+    public void shouldGetToken() throws Exception {
+        assertEquals("1234", AuthenticationRequest.create().withToken("1234").build().getToken());
     }
 
-    public static Builder create() {
-        return new Builder();
-    }
-
-    public static class Builder {
-        private String token;
-
-        public Builder withToken(final String token) {
-            this.token = token;
-            return this;
-        }
-
-        public AuthenticationRequest build() {
-            final AuthenticationRequest authenticationRequest = new AuthenticationRequest();
-            authenticationRequest.token = token;
-            return authenticationRequest;
-        }
-    }
 }

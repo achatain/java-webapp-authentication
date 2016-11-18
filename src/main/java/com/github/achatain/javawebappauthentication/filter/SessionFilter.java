@@ -35,10 +35,15 @@ import static java.lang.String.format;
 @Singleton
 public class SessionFilter implements Filter {
 
-    private SessionService sessionService;
+    private final SessionService sessionService;
     private String loginUrlRedirect;
 
     public static final String LOGIN_URL_REDIRECT = "loginUrlRedirect";
+
+    @Inject
+    public SessionFilter(final SessionService sessionService) {
+        this.sessionService = sessionService;
+    }
 
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
@@ -65,10 +70,5 @@ public class SessionFilter implements Filter {
     @Override
     public void destroy() {
         // no-op
-    }
-
-    @Inject
-    private void setUserService(final SessionService sessionService) {
-        this.sessionService = sessionService;
     }
 }

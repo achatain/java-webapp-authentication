@@ -29,8 +29,9 @@ import javax.servlet.http.HttpSession;
 
 import static com.github.achatain.javawebappauthentication.service.impl.SessionServiceImpl.SESSION_IS_USER_LOGGED_IN;
 import static com.github.achatain.javawebappauthentication.service.impl.SessionServiceImpl.SESSION_LOGGED_IN_USER;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 public class SessionServiceImplTest {
@@ -46,14 +47,14 @@ public class SessionServiceImplTest {
     @Test
     public void isUserLoggedIn() throws Exception {
         when(session.getAttribute(SESSION_IS_USER_LOGGED_IN)).thenReturn(true);
-        assertTrue(new SessionServiceImpl().isUserLoggedIn(session));
+        assertThat(new SessionServiceImpl().isUserLoggedIn(session), is(true));
     }
 
     @Test
     public void getUserFromSession() throws Exception {
         final AuthenticatedUser authenticatedUser = AuthenticatedUser.create().build();
         when(session.getAttribute(SESSION_LOGGED_IN_USER)).thenReturn(authenticatedUser);
-        assertEquals(authenticatedUser, new SessionServiceImpl().getUserFromSession(session));
+        assertThat(new SessionServiceImpl().getUserFromSession(session), sameInstance(authenticatedUser));
     }
 
 }
