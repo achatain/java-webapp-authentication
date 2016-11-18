@@ -22,6 +22,7 @@ package com.github.achatain.javawebappauthentication.servlet;
 import com.github.achatain.javawebappauthentication.entity.AuthenticatedUser;
 import com.github.achatain.javawebappauthentication.entity.AuthenticationRequest;
 import com.github.achatain.javawebappauthentication.service.AuthenticationService;
+import com.github.achatain.javawebappauthentication.service.SessionService;
 import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 
@@ -39,11 +40,13 @@ public class GoogleSigninServlet extends HttpServlet {
 
     private final transient Gson gson;
     private final transient AuthenticationService authenticationService;
+    private final transient SessionService sessionService;
 
     @Inject
-    private GoogleSigninServlet(final Gson gson, final AuthenticationService authenticationService) {
+    private GoogleSigninServlet(final Gson gson, final AuthenticationService authenticationService, final SessionService sessionService) {
         this.gson = gson;
         this.authenticationService = authenticationService;
+        this.sessionService = sessionService;
     }
 
     @Override
@@ -51,6 +54,7 @@ public class GoogleSigninServlet extends HttpServlet {
         final AuthenticationRequest authenticationRequest = gson.fromJson(req.getReader(), AuthenticationRequest.class);
         Preconditions.checkArgument(Objects.nonNull(authenticationRequest), "Invalid request");
         final AuthenticatedUser authenticatedUser = authenticationService.authenticate(authenticationRequest);
+        sessionService.putUserInSession(req.getSession(), authenticatedUser);
         resp.getWriter().write(gson.toJson(authenticatedUser));
     }
 }
