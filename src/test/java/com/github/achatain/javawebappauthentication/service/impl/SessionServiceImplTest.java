@@ -32,6 +32,7 @@ import static com.github.achatain.javawebappauthentication.service.impl.SessionS
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class SessionServiceImplTest {
@@ -39,22 +40,45 @@ public class SessionServiceImplTest {
     @Mock
     private HttpSession session;
 
+    private SessionServiceImpl sessionService;
+
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+        sessionService = new SessionServiceImpl();
     }
 
     @Test
-    public void isUserLoggedIn() throws Exception {
+    public void shouldCheckIfUserIsLoggedIn() throws Exception {
         when(session.getAttribute(SESSION_IS_USER_LOGGED_IN)).thenReturn(true);
-        assertThat(new SessionServiceImpl().isUserLoggedIn(session), is(true));
+        assertThat(sessionService.isUserLoggedIn(session), is(true));
     }
 
     @Test
-    public void getUserFromSession() throws Exception {
+    public void shouldReturnFalseWhenNoUserLoggedInAttributeIsFoundInSession() throws Exception {
+        when(session.getAttribute(SESSION_IS_USER_LOGGED_IN)).thenReturn(null);
+        assertThat(sessionService.isUserLoggedIn(session), is(false));
+    }
+
+    @Test
+    public void shouldGetUserFromSession() throws Exception {
         final AuthenticatedUser authenticatedUser = AuthenticatedUser.create().build();
         when(session.getAttribute(SESSION_LOGGED_IN_USER)).thenReturn(authenticatedUser);
-        assertThat(new SessionServiceImpl().getUserFromSession(session), sameInstance(authenticatedUser));
+        assertThat(sessionService.getUserFromSession(session), sameInstance(authenticatedUser));
+    }
+
+    @Test
+    public void shouldPutUserInSession() throws Exception {
+        final AuthenticatedUser authenticatedUser = AuthenticatedUser.create().withId("1234").build();
+        sessionService.putUserInSession(session, authenticatedUser);
+        verify(session).setAttribute(SESSION_IS_USER_LOGGED_IN, true);
+        verify(session).setAttribute(SESSION_LOGGED_IN_USER, authenticatedUser);
+    }
+
+    @Test
+    public void shouldInvalidateSession() throws Exception {
+        sessionService.invalidateSession(session);
+        verify(session).invalidate();
     }
 
 }
