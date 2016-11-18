@@ -42,10 +42,11 @@ public class SessionServiceImpl implements SessionService {
         final Optional<Boolean> attribute = Optional.ofNullable((Boolean) session.getAttribute(SESSION_IS_USER_LOGGED_IN));
         final Boolean userLoggedIn = attribute.orElse(false);
         if (!userLoggedIn) {
-            LOG.info(format("Upon successful login, user will be redirected to [%s]", redirectUrl));
+            LOG.info(format("No user was found in the session. Upon successful login, user will be redirected to [%s]", redirectUrl));
             session.setAttribute(SESSION_REDIRECT_URL, redirectUrl);
+        } else {
+            LOG.info("A user was found in the session");
         }
-        LOG.info(userLoggedIn ? "A user was found in the session" : "No user was found in the session");
         return userLoggedIn;
     }
 
