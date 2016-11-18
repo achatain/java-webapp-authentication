@@ -59,14 +59,14 @@ public class SessionFilterTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void shouldFailToInitSessionFilterWithInvalidFilterConfig() throws Exception {
-        when(filterConfig.getInitParameter(SessionFilter.LOGIN_URL_REDIRECT)).thenReturn("not_a_valid_url");
+    public void shouldFailToInitSessionFilterWithEmptyLoginRedirectUrl() throws Exception {
+        when(filterConfig.getInitParameter(SessionFilter.LOGIN_URL_REDIRECT)).thenReturn("");
         sessionFilter.init(filterConfig);
     }
 
     @Test
     public void shouldDoFilterWhenUserIsLoggedIn() throws Exception {
-        when(sessionService.isUserLoggedIn(any())).thenReturn(true);
+        when(sessionService.isUserLoggedIn(any(), any())).thenReturn(true);
         sessionFilter.doFilter(httpServletRequest, httpServletResponse, filterChain);
         verify(filterChain).doFilter(httpServletRequest, httpServletResponse);
     }
@@ -75,7 +75,7 @@ public class SessionFilterTest {
     public void shouldRedirectToLoginUrlWhenNoUserIsLoggedIn() throws Exception {
         when(filterConfig.getInitParameter(SessionFilter.LOGIN_URL_REDIRECT)).thenReturn("https://test.com/auth");
         sessionFilter.init(filterConfig);
-        when(sessionService.isUserLoggedIn(any())).thenReturn(false);
+        when(sessionService.isUserLoggedIn(any(), any())).thenReturn(false);
         sessionFilter.doFilter(httpServletRequest, httpServletResponse, filterChain);
         verify(httpServletResponse).sendRedirect("https://test.com/auth");
     }
