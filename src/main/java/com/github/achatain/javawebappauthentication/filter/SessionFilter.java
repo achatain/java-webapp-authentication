@@ -21,7 +21,6 @@ package com.github.achatain.javawebappauthentication.filter;
 
 import com.github.achatain.javawebappauthentication.service.SessionService;
 import com.google.api.client.util.Preconditions;
-import org.apache.commons.validator.routines.UrlValidator;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -29,11 +28,15 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import static java.lang.String.format;
+import static java.util.Objects.nonNull;
 
 @Singleton
 public class SessionFilter implements Filter {
+
+    private static final Logger LOG = Logger.getLogger(SessionFilter.class.getName());
 
     private final SessionService sessionService;
     private String loginUrlRedirect;
@@ -48,20 +51,21 @@ public class SessionFilter implements Filter {
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
         final String loginUrlInitParameter = filterConfig.getInitParameter(LOGIN_URL_REDIRECT);
-
-        Preconditions.checkArgument(UrlValidator.getInstance().isValid(loginUrlInitParameter), format("The login redirect URL [%s] is invalid", loginUrlInitParameter));
-
+        Preconditions.checkArgument(nonNull(loginUrlInitParameter) && !loginUrlInitParameter.trim().isEmpty(), format("The login redirect URL [%s] is empty", loginUrlInitParameter));
         loginUrlRedirect = loginUrlInitParameter;
+        LOG.info(format("SessionFilter initialised with the following login url to redirect to when no user is logged in [%s]", loginUrlRedirect));
     }
 
     @Override
     public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain) throws IOException, ServletException {
         final HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
-        final boolean userLoggedIn = sessionService.isUserLoggedIn(httpServletRequest.getSession());
+        final boolean userLoggedIn = sessionService.isUserLoggedIn(httpServletRequest.getSession(), httpServletRequest.getRequestURI());
 
         if (userLoggedIn) {
+            LOG.info("User is logged in, hence the request can proceed.");
             filterChain.doFilter(servletRequest, servletResponse);
         } else {
+            LOG.info(format("No user is logged in, hence redirecting to the login url [%s]", loginUrlRedirect));
             HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
             httpServletResponse.sendRedirect(loginUrlRedirect);
         }

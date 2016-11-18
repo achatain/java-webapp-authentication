@@ -24,31 +24,48 @@ import com.github.achatain.javawebappauthentication.service.SessionService;
 
 import javax.servlet.http.HttpSession;
 import java.util.Optional;
+import java.util.logging.Logger;
+
+import static java.lang.String.format;
 
 public class SessionServiceImpl implements SessionService {
 
+    private static final Logger LOG = Logger.getLogger(SessionServiceImpl.class.getName());
+
     static final String SESSION_IS_USER_LOGGED_IN = "IsUserLoggedIn";
     static final String SESSION_LOGGED_IN_USER = "LoggedInUser";
+    static final String SESSION_REDIRECT_URL = "RedirectUrl";
 
     @Override
-    public boolean isUserLoggedIn(final HttpSession session) {
+    public boolean isUserLoggedIn(final HttpSession session, final String redirectUrl) {
+        LOG.info("Checking if a user is found in the session...");
         final Optional<Boolean> attribute = Optional.ofNullable((Boolean) session.getAttribute(SESSION_IS_USER_LOGGED_IN));
-        return attribute.orElse(false);
+        final Boolean userLoggedIn = attribute.orElse(false);
+        if (!userLoggedIn) {
+            LOG.info(format("Upon successful login, user will be redirected to [%s]", redirectUrl));
+            session.setAttribute(SESSION_REDIRECT_URL, redirectUrl);
+        }
+        LOG.info(userLoggedIn ? "A user was found in the session" : "No user was found in the session");
+        return userLoggedIn;
     }
 
     @Override
     public AuthenticatedUser getUserFromSession(final HttpSession session) {
-        return (AuthenticatedUser) session.getAttribute(SESSION_LOGGED_IN_USER);
+        final AuthenticatedUser authenticatedUser = (AuthenticatedUser) session.getAttribute(SESSION_LOGGED_IN_USER);
+        LOG.info(format("User returned from session is [%s]", authenticatedUser));
+        return authenticatedUser;
     }
 
     @Override
     public void putUserInSession(final HttpSession session, final AuthenticatedUser authenticatedUser) {
+        LOG.info(format("Putting user in session [%s]", authenticatedUser));
         session.setAttribute(SESSION_IS_USER_LOGGED_IN, true);
         session.setAttribute(SESSION_LOGGED_IN_USER, authenticatedUser);
     }
 
     @Override
     public void invalidateSession(final HttpSession session) {
+        LOG.info("Invalidating the session");
         session.invalidate();
     }
 }
