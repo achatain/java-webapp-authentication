@@ -23,6 +23,7 @@ import com.github.achatain.javawebappauthentication.entity.AuthenticatedUser;
 import com.github.achatain.javawebappauthentication.service.SessionService;
 
 import javax.servlet.http.HttpSession;
+import java.util.Optional;
 
 public class SessionServiceImpl implements SessionService {
 
@@ -31,11 +32,23 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public boolean isUserLoggedIn(final HttpSession session) {
-        return (boolean) session.getAttribute(SESSION_IS_USER_LOGGED_IN);
+        final Optional<Boolean> attribute = Optional.ofNullable((Boolean) session.getAttribute(SESSION_IS_USER_LOGGED_IN));
+        return attribute.orElse(false);
     }
 
     @Override
     public AuthenticatedUser getUserFromSession(final HttpSession session) {
         return (AuthenticatedUser) session.getAttribute(SESSION_LOGGED_IN_USER);
+    }
+
+    @Override
+    public void putUserInSession(final HttpSession session, final AuthenticatedUser authenticatedUser) {
+        session.setAttribute(SESSION_IS_USER_LOGGED_IN, true);
+        session.setAttribute(SESSION_LOGGED_IN_USER, authenticatedUser);
+    }
+
+    @Override
+    public void invalidateSession(final HttpSession session) {
+        session.invalidate();
     }
 }

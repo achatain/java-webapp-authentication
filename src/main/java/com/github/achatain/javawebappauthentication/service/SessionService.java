@@ -28,4 +28,8 @@ public interface SessionService {
     boolean isUserLoggedIn(HttpSession session);
 
     AuthenticatedUser getUserFromSession(HttpSession session);
+
+    void putUserInSession(HttpSession session, AuthenticatedUser authenticatedUser);
+
+    void invalidateSession(HttpSession session);
 }

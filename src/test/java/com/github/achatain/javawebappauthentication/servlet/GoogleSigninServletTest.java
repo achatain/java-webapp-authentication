@@ -22,6 +22,7 @@ package com.github.achatain.javawebappauthentication.servlet;
 import com.github.achatain.javawebappauthentication.entity.AuthenticatedUser;
 import com.github.achatain.javawebappauthentication.entity.AuthenticationRequest;
 import com.github.achatain.javawebappauthentication.service.AuthenticationService;
+import com.github.achatain.javawebappauthentication.service.SessionService;
 import com.google.api.client.util.Charsets;
 import com.google.common.io.Resources;
 import com.google.gson.Gson;
@@ -39,6 +40,7 @@ import java.io.StringWriter;
 import static com.google.common.io.Resources.getResource;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class GoogleSigninServletTest {
@@ -51,6 +53,9 @@ public class GoogleSigninServletTest {
 
     @Mock
     private AuthenticationService authenticationService;
+
+    @Mock
+    private SessionService sessionService;
 
     @Mock
     private HttpServletRequest httpServletRequest;
@@ -70,10 +75,12 @@ public class GoogleSigninServletTest {
     public void shouldAuthenticateAndRespondWithAnAuthenticatedUserInstance() throws Exception {
         final String json = Resources.toString(getResource("authenticationRequest.json"), Charsets.UTF_8);
         when(httpServletRequest.getReader()).thenReturn(new BufferedReader(new StringReader(json)));
-        when(authenticationService.authenticate(authenticationRequestCaptor.capture())).thenReturn(AuthenticatedUser.create().withId("test_id").build());
+        final AuthenticatedUser authenticatedUser = AuthenticatedUser.create().withId("test_id").build();
+        when(authenticationService.authenticate(authenticationRequestCaptor.capture())).thenReturn(authenticatedUser);
         final StringWriter stringWriter = new StringWriter();
         when(httpServletResponse.getWriter()).thenReturn(new PrintWriter(stringWriter));
         googleSigninServlet.doPost(httpServletRequest, httpServletResponse);
+        verify(sessionService).putUserInSession(httpServletRequest.getSession(), authenticatedUser);
         assertThat(authenticationRequestCaptor.getValue().getToken(), equalTo("1234"));
         assertThat(stringWriter.toString(), equalTo("{\"id\":\"test_id\"}"));
     }
