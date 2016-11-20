@@ -7,13 +7,43 @@
     <groupId>com.github.achatain</groupId>
     <artifactId>java-webapp-authentication</artifactId>
     <version>1.0.0</version>
+    <packaging>jar</packaging>
+
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>Authentication framework leveraging Google sign-in for servlet based Java webapps</description>
+    <url>https://github.com/achatain/java-webapp-authentication</url>
+
+    <licenses>
+        <license>
+            <name>GNU General Public License, Version 3, 29 June 2007</name>
+            <url>http://www.gnu.org/licenses/gpl.html</url>
+        </license>
+    </licenses>
 
     <developers>
         <developer>
-            <email>achatain[at]outlook[dot]com</email>
+            <name>Antoine Chatain</name>
+            <email>achatain@outlook.com</email>
             <url>https://github.com/achatain</url>
         </developer>
     </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/achatain/java-webapp-authentication.git</connection>
+        <developerConnection>scm:git:ssh://github.com:achatain/java-webapp-authentication.git</developerConnection>
+        <url>http://github.com/achatain/java-webapp-authentication/tree/master</url>
+    </scm>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -32,6 +62,9 @@
         <hamcrest-version>2.0.0.0</hamcrest-version>
         <coverall-version>4.3.0</coverall-version>
         <jacoco-version>0.7.7.201606060606</jacoco-version>
+        <maven-source-plugin-version>3.0.1</maven-source-plugin-version>
+        <maven-javadoc-plugin-version>2.10.4</maven-javadoc-plugin-version>
+        <maven-gpg-plugin-version>1.6</maven-gpg-plugin-version>
     </properties>
 
     <prerequisites>
@@ -117,6 +150,46 @@
                         <goals>
                             <goal>display-dependency-updates</goal>
                             <goal>display-plugin-updates</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${maven-source-plugin-version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven-javadoc-plugin-version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>${maven-gpg-plugin-version}</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
                         </goals>
                     </execution>
                 </executions>
