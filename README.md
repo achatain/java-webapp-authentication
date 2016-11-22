@@ -13,7 +13,16 @@ JWA (**J**ava **W**ebapp **A**uthentication) assists in leveraging [Google Sign-
  - etc.
  
 #How do I integrate it in my backend app?
- 1. Add the maven dependency in your pom file (uploading in Maven central is in progress), or alternatively build the code locally then add the jar in your classpath
+ 1. Add the dependency in your pom file
+ 
+ ```xml
+<dependency>
+    <groupId>com.github.achatain</groupId>
+    <artifactId>java-webapp-authentication</artifactId>
+    <version>1.0.1</version>
+</dependency>
+ ```
+ 
  2. Install the **AuthenticationModule** to enable the dependency injection (suggested to use [Google Guice](https://github.com/google/guice))
  
  ```java
