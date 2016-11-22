@@ -32,4 +32,6 @@ public interface SessionService {
     void putUserInSession(HttpSession session, AuthenticatedUser authenticatedUser);
 
     void invalidateSession(HttpSession session);
+
+    String popOriginalRequestUrl(HttpSession session);
 }

@@ -19,33 +19,23 @@
 
 package com.github.achatain.javawebappauthentication.entity;
 
-public class AuthenticationRequest {
+import org.junit.Test;
 
-    private String token;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.Assert.assertThat;
 
-    public String getToken() {
-        return token;
+public class AuthenticationResponseTest {
+
+    @Test
+    public void shouldGetOriginalRequestUrl() throws Exception {
+        assertThat(AuthenticationResponse.create().withOriginalRequestUrl("www.test.com").build().getOriginalRequestUrl(), equalTo("www.test.com"));
     }
 
-    public static Builder create() {
-        return new Builder();
+    @Test
+    public void shouldGeAuthenticatedUser() throws Exception {
+        final AuthenticatedUser authenticatedUser = AuthenticatedUser.create().withId("1").build();
+        assertThat(AuthenticationResponse.create().withAuthenticatedUser(authenticatedUser).build().getAuthenticatedUser(), sameInstance(authenticatedUser));
     }
 
-    public static class Builder {
-        private String token;
-
-        private Builder() {
-        }
-
-        public Builder withToken(final String token) {
-            this.token = token;
-            return this;
-        }
-
-        public AuthenticationRequest build() {
-            final AuthenticationRequest authenticationRequest = new AuthenticationRequest();
-            authenticationRequest.token = token;
-            return authenticationRequest;
-        }
-    }
 }

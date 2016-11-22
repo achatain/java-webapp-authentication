@@ -69,4 +69,12 @@ public class SessionServiceImpl implements SessionService {
         LOG.info("Invalidating the session");
         session.invalidate();
     }
+
+    @Override
+    public String popOriginalRequestUrl(final HttpSession session) {
+        String sessionRedirectUrl = (String) session.getAttribute(SESSION_REDIRECT_URL);
+        LOG.info(format("Pop original request out of session [%s]", sessionRedirectUrl));
+        session.removeAttribute(SESSION_REDIRECT_URL);
+        return sessionRedirectUrl;
+    }
 }
