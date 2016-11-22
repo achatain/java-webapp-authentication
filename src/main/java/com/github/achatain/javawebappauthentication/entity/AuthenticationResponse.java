@@ -19,12 +19,16 @@
 
 package com.github.achatain.javawebappauthentication.entity;
 
-public class AuthenticationRequest {
+public class AuthenticationResponse {
+    private String originalRequestUrl;
+    private AuthenticatedUser authenticatedUser;
 
-    private String token;
+    public String getOriginalRequestUrl() {
+        return originalRequestUrl;
+    }
 
-    public String getToken() {
-        return token;
+    public AuthenticatedUser getAuthenticatedUser() {
+        return authenticatedUser;
     }
 
     public static Builder create() {
@@ -32,20 +36,27 @@ public class AuthenticationRequest {
     }
 
     public static class Builder {
-        private String token;
+        private String originalRequestUrl;
+        private AuthenticatedUser authenticatedUser;
 
         private Builder() {
         }
 
-        public Builder withToken(final String token) {
-            this.token = token;
+        public Builder withOriginalRequestUrl(final String originalRequestUrl) {
+            this.originalRequestUrl = originalRequestUrl;
             return this;
         }
 
-        public AuthenticationRequest build() {
-            final AuthenticationRequest authenticationRequest = new AuthenticationRequest();
-            authenticationRequest.token = token;
-            return authenticationRequest;
+        public Builder withAuthenticatedUser(final AuthenticatedUser authenticatedUser) {
+            this.authenticatedUser = authenticatedUser;
+            return this;
+        }
+
+        public AuthenticationResponse build() {
+            final AuthenticationResponse authenticationResponse = new AuthenticationResponse();
+            authenticationResponse.originalRequestUrl = originalRequestUrl;
+            authenticationResponse.authenticatedUser = authenticatedUser;
+            return authenticationResponse;
         }
     }
 }

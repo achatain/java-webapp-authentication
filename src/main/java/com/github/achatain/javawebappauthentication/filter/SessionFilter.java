@@ -59,15 +59,14 @@ public class SessionFilter implements Filter {
     @Override
     public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain) throws IOException, ServletException {
         final HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
-        final boolean userLoggedIn = sessionService.isUserLoggedIn(httpServletRequest.getSession(), httpServletRequest.getRequestURI());
+        final boolean userLoggedIn = sessionService.isUserLoggedIn(httpServletRequest.getSession(), httpServletRequest.getRequestURL().toString());
 
         if (userLoggedIn) {
             LOG.info("User is logged in, hence the request can proceed.");
             filterChain.doFilter(servletRequest, servletResponse);
         } else {
             LOG.info(format("No user is logged in, hence redirecting to the login url [%s]", loginUrlRedirect));
-            HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
-            httpServletResponse.sendRedirect(loginUrlRedirect);
+            ((HttpServletResponse) servletResponse).sendRedirect(loginUrlRedirect);
         }
     }
 

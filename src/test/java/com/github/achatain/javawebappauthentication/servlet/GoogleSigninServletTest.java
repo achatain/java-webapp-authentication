@@ -32,6 +32,7 @@ import org.mockito.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.io.StringReader;
@@ -63,6 +64,9 @@ public class GoogleSigninServletTest {
     @Mock
     private HttpServletResponse httpServletResponse;
 
+    @Mock
+    private HttpSession httpSession;
+
     @InjectMocks
     private GoogleSigninServlet googleSigninServlet;
 
@@ -79,10 +83,14 @@ public class GoogleSigninServletTest {
         when(authenticationService.authenticate(authenticationRequestCaptor.capture())).thenReturn(authenticatedUser);
         final StringWriter stringWriter = new StringWriter();
         when(httpServletResponse.getWriter()).thenReturn(new PrintWriter(stringWriter));
+        when(httpServletRequest.getSession()).thenReturn(httpSession);
+        final String originalRequestUrl = "www.myresource.com";
+        when(sessionService.popOriginalRequestUrl(httpSession)).thenReturn(originalRequestUrl);
         googleSigninServlet.doPost(httpServletRequest, httpServletResponse);
         verify(sessionService).putUserInSession(httpServletRequest.getSession(), authenticatedUser);
         assertThat(authenticationRequestCaptor.getValue().getToken(), equalTo("1234"));
-        assertThat(stringWriter.toString(), equalTo("{\"id\":\"test_id\"}"));
+        final String authenticationResponse = Resources.toString(getResource("authenticationResponse.json"), Charsets.UTF_8);
+        assertThat(stringWriter.toString(), equalTo(authenticationResponse));
     }
 
     @Test(expected = IllegalArgumentException.class)
