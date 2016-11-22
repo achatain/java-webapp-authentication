@@ -30,6 +30,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import static org.mockito.Mockito.*;
 
@@ -46,6 +47,9 @@ public class SessionFilterTest {
 
     @Mock
     private HttpServletResponse httpServletResponse;
+
+    @Mock
+    private HttpSession httpSession;
 
     @Mock
     private FilterChain filterChain;
@@ -66,18 +70,27 @@ public class SessionFilterTest {
 
     @Test
     public void shouldDoFilterWhenUserIsLoggedIn() throws Exception {
-        when(sessionService.isUserLoggedIn(any(), any())).thenReturn(true);
+        final String requestUrl = "www.test.com";
+        final StringBuffer sb = new StringBuffer(requestUrl);
+        when(httpServletRequest.getRequestURL()).thenReturn(sb);
+        when(httpServletRequest.getSession()).thenReturn(httpSession);
+        when(sessionService.isUserLoggedIn(httpSession, requestUrl)).thenReturn(true);
         sessionFilter.doFilter(httpServletRequest, httpServletResponse, filterChain);
         verify(filterChain).doFilter(httpServletRequest, httpServletResponse);
     }
 
     @Test
     public void shouldRedirectToLoginUrlWhenNoUserIsLoggedIn() throws Exception {
-        when(filterConfig.getInitParameter(SessionFilter.LOGIN_URL_REDIRECT)).thenReturn("https://test.com/auth");
+        final String loginUrlRedirect = "https://test.com/auth";
+        when(filterConfig.getInitParameter(SessionFilter.LOGIN_URL_REDIRECT)).thenReturn(loginUrlRedirect);
         sessionFilter.init(filterConfig);
-        when(sessionService.isUserLoggedIn(any(), any())).thenReturn(false);
+        final String requestUrl = "www.test.com";
+        final StringBuffer sb = new StringBuffer(requestUrl);
+        when(httpServletRequest.getRequestURL()).thenReturn(sb);
+        when(httpServletRequest.getSession()).thenReturn(httpSession);
+        when(sessionService.isUserLoggedIn(httpSession, requestUrl)).thenReturn(false);
         sessionFilter.doFilter(httpServletRequest, httpServletResponse, filterChain);
-        verify(httpServletResponse).sendRedirect("https://test.com/auth");
+        verify(httpServletResponse).sendRedirect(loginUrlRedirect);
     }
 
     @Test

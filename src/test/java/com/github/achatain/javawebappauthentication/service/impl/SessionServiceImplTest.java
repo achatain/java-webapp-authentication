@@ -29,6 +29,8 @@ import javax.servlet.http.HttpSession;
 
 import static com.github.achatain.javawebappauthentication.service.impl.SessionServiceImpl.SESSION_IS_USER_LOGGED_IN;
 import static com.github.achatain.javawebappauthentication.service.impl.SessionServiceImpl.SESSION_LOGGED_IN_USER;
+import static com.github.achatain.javawebappauthentication.service.impl.SessionServiceImpl.SESSION_REDIRECT_URL;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
@@ -79,6 +81,15 @@ public class SessionServiceImplTest {
     public void shouldInvalidateSession() throws Exception {
         sessionService.invalidateSession(session);
         verify(session).invalidate();
+    }
+
+    @Test
+    public void shouldPopOriginalRequestUrl() throws Exception {
+        final String originalRequestUrl = "www.myresource.com";
+        when(session.getAttribute(SESSION_REDIRECT_URL)).thenReturn(originalRequestUrl);
+        assertThat(sessionService.popOriginalRequestUrl(session), equalTo(originalRequestUrl));
+        verify(session).getAttribute(SESSION_REDIRECT_URL);
+        verify(session).removeAttribute(SESSION_REDIRECT_URL);
     }
 
 }
