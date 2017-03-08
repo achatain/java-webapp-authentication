@@ -27,6 +27,8 @@ import org.mockito.MockitoAnnotations;
 
 import javax.servlet.http.HttpSession;
 
+import java.util.Optional;
+
 import static com.github.achatain.javawebappauthentication.service.impl.SessionServiceImpl.SESSION_IS_USER_LOGGED_IN;
 import static com.github.achatain.javawebappauthentication.service.impl.SessionServiceImpl.SESSION_LOGGED_IN_USER;
 import static com.github.achatain.javawebappauthentication.service.impl.SessionServiceImpl.SESSION_REDIRECT_URL;
@@ -66,7 +68,16 @@ public class SessionServiceImplTest {
     public void shouldGetUserFromSession() throws Exception {
         final AuthenticatedUser authenticatedUser = AuthenticatedUser.create().build();
         when(session.getAttribute(SESSION_LOGGED_IN_USER)).thenReturn(authenticatedUser);
-        assertThat(sessionService.getUserFromSession(session), sameInstance(authenticatedUser));
+        final Optional<AuthenticatedUser> optionalUser = sessionService.getUserFromSession(session);
+        assertThat(optionalUser.isPresent(), is(true));
+        assertThat(optionalUser.get(), sameInstance(authenticatedUser));
+    }
+
+    @Test
+    public void shouldNotGetUserFromSession() throws Exception {
+        when(session.getAttribute(SESSION_LOGGED_IN_USER)).thenReturn(null);
+        final Optional<AuthenticatedUser> optionalUser = sessionService.getUserFromSession(session);
+        assertThat(optionalUser.isPresent(), is(false));
     }
 
     @Test

@@ -51,10 +51,10 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public AuthenticatedUser getUserFromSession(final HttpSession session) {
-        final AuthenticatedUser authenticatedUser = (AuthenticatedUser) session.getAttribute(SESSION_LOGGED_IN_USER);
-        LOG.info(format("User returned from session is [%s]", authenticatedUser));
-        return authenticatedUser;
+    public Optional<AuthenticatedUser> getUserFromSession(final HttpSession session) {
+        final Optional<AuthenticatedUser> optionalAuthenticatedUser = Optional.ofNullable((AuthenticatedUser) session.getAttribute(SESSION_LOGGED_IN_USER));
+        optionalAuthenticatedUser.ifPresent(user -> LOG.info(format("User found in session is [%s]", user)));
+        return optionalAuthenticatedUser;
     }
 
     @Override
