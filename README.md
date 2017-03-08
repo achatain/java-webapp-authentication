@@ -17,9 +17,9 @@ JWA (**J**ava **W**ebapp **A**uthentication) assists in leveraging [Google Sign-
  
  ```xml
 <dependency>
-    <groupId>com.github.achatain</groupId>
-    <artifactId>java-webapp-authentication</artifactId>
-    <version>1.0.1</version>
+  <groupId>com.github.achatain</groupId>
+  <artifactId>java-webapp-authentication</artifactId>
+  <version>1.1.0</version>
 </dependency>
  ```
  

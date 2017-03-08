@@ -22,12 +22,13 @@ package com.github.achatain.javawebappauthentication.service;
 import com.github.achatain.javawebappauthentication.entity.AuthenticatedUser;
 
 import javax.servlet.http.HttpSession;
+import java.util.Optional;
 
 public interface SessionService {
 
     boolean isUserLoggedIn(HttpSession session, String redirectUrl);
 
-    AuthenticatedUser getUserFromSession(HttpSession session);
+    Optional<AuthenticatedUser> getUserFromSession(HttpSession session);
 
     void putUserInSession(HttpSession session, AuthenticatedUser authenticatedUser);
 
